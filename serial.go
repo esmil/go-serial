@@ -30,7 +30,7 @@ const (
 	B9600_8E2 = termios.B9600 | termios.CS8 | termios.PARENB | termios.CSTOPB
 )
 
-func Open(dev string, flag int, perm uint32, cflags termios.TCFlag_t) (*Serial, os.Error) {
+func Open(dev string, flag int, perm uint32, cflags uint) (*Serial, os.Error) {
 	f, err := os.Open(dev, flag, perm)
 	if err != nil {
 		return nil, err
@@ -45,11 +45,11 @@ func Open(dev string, flag int, perm uint32, cflags termios.TCFlag_t) (*Serial, 
 
 	var t termios.Termios
 
-	t.C_cflag = termios.CREAD | termios.HUPCL | termios.CLOCAL | cflags
+	t.CFlag = termios.CREAD | termios.HUPCL | termios.CLOCAL | cflags
 
 	// TODO: figure out why this works and if
-	// other entries in C_cc should be set
-	t.C_cc[termios.VMIN] = 1
+	// other entries in CC should be set
+	t.CC[termios.VMIN] = 1
 
 	if err = termios.Set(fd, &t); err != nil {
 		return nil, err
