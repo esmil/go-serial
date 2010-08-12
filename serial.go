@@ -30,7 +30,7 @@ const (
 	B9600_8E2 = termios.B9600 | termios.CS8 | termios.PARENB | termios.CSTOPB
 )
 
-func Open(dev string, flag int, perm int, cflags termios.TCFlag_t) (*Serial, os.Error) {
+func Open(dev string, flag int, perm uint32, cflags termios.TCFlag_t) (*Serial, os.Error) {
 	f, err := os.Open(dev, flag, perm)
 	if err != nil {
 		return nil, err
