@@ -39,7 +39,7 @@ func Open(dev string, flag int, perm uint32, cflags uint) (*Serial, os.Error) {
 	fd := f.Fd()
 	s := Serial{File: f}
 
-	if err = termios.Get(fd, &s.ot); err != nil {
+	if err = s.ot.Get(fd); err != nil {
 		return nil, err
 	}
 
@@ -51,7 +51,7 @@ func Open(dev string, flag int, perm uint32, cflags uint) (*Serial, os.Error) {
 	// other entries in CC should be set
 	t.CC[termios.VMIN] = 1
 
-	if err = termios.Set(fd, &t); err != nil {
+	if err = t.Set(fd); err != nil {
 		return nil, err
 	}
 
@@ -59,7 +59,7 @@ func Open(dev string, flag int, perm uint32, cflags uint) (*Serial, os.Error) {
 }
 
 func (s *Serial) Close() os.Error {
-	termios.Set(s.Fd(), &s.ot)
+	s.ot.Set(s.Fd())
 
 	return s.File.Close()
 }
