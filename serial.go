@@ -17,49 +17,15 @@
 package serial
 
 import (
-	"os"
 	"termios"
 )
 
-type Serial struct {
-	*os.File
-	ot termios.Termios
-}
-
+// speed constants
 const (
-	B9600_8E2 = termios.B9600 | termios.CS8 | termios.PARENB | termios.CSTOPB
+	B9600 = termios.B9600
 )
 
-func Open(dev string, flag int, perm uint32, cflags uint) (*Serial, os.Error) {
-	f, err := os.Open(dev, flag, perm)
-	if err != nil {
-		return nil, err
-	}
-
-	fd := f.Fd()
-	s := Serial{File: f}
-
-	if err = s.ot.Get(fd); err != nil {
-		return nil, err
-	}
-
-	var t termios.Termios
-
-	t.CFlag = termios.CREAD | termios.HUPCL | termios.CLOCAL | cflags
-
-	// TODO: figure out why this works and if
-	// other entries in CC should be set
-	t.CC[termios.VMIN] = 1
-
-	if err = t.Set(fd); err != nil {
-		return nil, err
-	}
-
-	return &s, nil
-}
-
-func (s *Serial) Close() os.Error {
-	s.ot.Set(s.Fd())
-
-	return s.File.Close()
-}
+// mode constants
+const (
+	MODE_8E1 = termios.CS8 | termios.PARENB | termios.CSTOPB
+)
